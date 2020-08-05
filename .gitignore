@@ -1,15 +1,28 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
+### Go template
+*.o
+*.a
 *.so
-*.dylib
 
-# Test binary, built with `go test -c`
+_obj
+_test
+
+
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+_testmain.go
+
+*.exe
 *.test
+*.prof
 
-# Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+.DS_Store
+.idea
+*.iml
