@@ -1,4 +1,4 @@
-# wxpay
+# WECHAT PAY
 
 微信支付SDK
 
