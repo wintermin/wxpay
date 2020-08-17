@@ -35,6 +35,10 @@ func (req UnifiedOrderRequest) IgnoreKey() []string {
 	return nil
 }
 
+func (req UnifiedOrderRequest) IsNeedCert() bool {
+	return false
+}
+
 type UnifiedOrderResponse struct {
 	Response
 	TradeType   TradeType         `map:"trade_type,omitempty"` //调用接口提交的交易类型
@@ -44,7 +48,7 @@ type UnifiedOrderResponse struct {
 	ClientParam map[string]string `map:"-"`                    //JSAPI支付(公众号支付)或小程序支付 sdk支付时有效: 客户端发起请求相关参数，原样返回给客户端即可
 }
 
-// UnifiedOrder 统一下单 https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
+// UnifiedOrder 统一下单 无需证书 https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
 func (c *Client) UnifiedOrder(ctx context.Context, request *UnifiedOrderRequest) (resp *UnifiedOrderResponse, err error) {
 	resp = &UnifiedOrderResponse{}
 	_, err = c.Do(ctx, MasterApiBaseUrl, request, resp)

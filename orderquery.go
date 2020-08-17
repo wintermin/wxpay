@@ -17,6 +17,10 @@ func (req OrderQueryRequest) IgnoreKey() []string {
 	return []string{KeySignType}
 }
 
+func (req OrderQueryRequest) IsNeedCert() bool {
+	return false
+}
+
 type OrderQueryResponse struct {
 	Response
 	DeviceInfo         string            `map:"device_info,omitempty"`          //微信支付分配的终端设备号

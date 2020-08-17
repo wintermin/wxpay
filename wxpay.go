@@ -20,6 +20,7 @@ type Client struct {
 	signType       SignType
 	apiInterceptor ApiInterceptor
 	httpClient     *http.Client
+	certHttpClient *http.Client
 	buildNonceStr  func() string
 }
 
@@ -31,6 +32,19 @@ func NewClient(appId, mchId, key string, signType SignType, http *http.Client) *
 		signType:       signType,
 		apiInterceptor: make(ApiInterceptor),
 		httpClient:     http,
+	}
+}
+
+// http 无需证书的api client certHttp 需要证书的api client
+func NewCertClient(appId, mchId, key string, signType SignType, http, certHttp *http.Client) *Client {
+	return &Client{
+		appId:          appId,
+		mchId:          mchId,
+		key:            key,
+		signType:       signType,
+		apiInterceptor: make(ApiInterceptor),
+		httpClient:     http,
+		certHttpClient: certHttp,
 	}
 }
 
@@ -52,6 +66,10 @@ func (c *Client) SignType() SignType {
 
 func (c *Client) HttpClient() *http.Client {
 	return c.httpClient
+}
+
+func (c *Client) CertHttpClient() *http.Client {
+	return c.certHttpClient
 }
 
 func (c *Client) ApiInterceptor() ApiInterceptor {

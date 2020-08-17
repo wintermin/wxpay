@@ -11,6 +11,10 @@ import (
 )
 
 const (
+	//http
+	HttpContentType    = "Content-Type"
+	HttpContentTypeXml = "text/xml"
+
 	//签名类型
 	Md5        SignType = "MD5"
 	HmacSha256 SignType = "HMAC-SHA256"
@@ -34,6 +38,12 @@ const (
 	TradeUserPaying TradeState = "USERPAYING" //用户支付中
 	TradePayError   TradeState = "PAYERROR"   //支付失败(其他原因，如银行返回失败)
 
+	//账单类型
+	BillTypeAll            BillType = "ALL"             //默认值 返回当日所有订单信息（不含充值退款订单）
+	BillTypeSuccess        BillType = "SUCCESS"         //返回当日成功支付的订单（不含充值退款订单）
+	BillTypeRefund         BillType = "REFUND"          //返回当日退款订单（不含充值退款订单）
+	BillTypeRechargeRefund BillType = "RECHARGE_REFUND" //返回当日充值退款订单
+
 	KeySign       = "sign"
 	KeyPackage    = "package"
 	KeySignType   = "sign_type"
@@ -41,21 +51,26 @@ const (
 	KeyMchId      = "mch_id"
 	KeyNonceStr   = "nonce_str"
 	KeyReturnCode = "return_code"
+	KeyReqInfo    = "req_info"
 
 	//微信域名
 	MasterApiBaseUrl = "https://api.mch.weixin.qq.com"
 	SlaveApiBaseUrl  = "https://api2.mch.weixin.qq.com"
 
 	//api列表
-	ApiUnifiedOrder = "/pay/unifiedorder" //统一下单
-	ApiOrderQuery   = "/pay/orderquery"   //查询订单
+	ApiUnifiedOrder = "/pay/unifiedorder"  //统一下单
+	ApiShortUrl     = "/tools/shorturl"    //转换短链接
+	ApiOrderQuery   = "/pay/orderquery"    //查询订单
+	ApiDownloadBill = "/pay/downloadbill"  //下载交易账单
+	ApiRefund       = "/secapi/pay/refund" //申请退款
+	ApiRefundQuery  = "/pay/refundquery"   //查询退款
 
 	// 响应渠道处理成功
 	responseSuccessBody = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>"
 )
 
 var (
-	ApiList = []string{ApiUnifiedOrder, ApiOrderQuery}
+	ApiList = []string{ApiUnifiedOrder, ApiShortUrl, ApiOrderQuery, ApiDownloadBill, ApiRefund, ApiRefundQuery}
 	//标准北京时间，时区为东八区；如果商户的系统时间为非标准北京时间。参数值必须根据商户系统所在时区先换算成标准北京时间
 	BeijingLocation = time.FixedZone("Asia/Shanghai", 8*60*60)
 )
@@ -65,9 +80,11 @@ type (
 	ReturnCode string //通信标识
 	TradeType  string //交易类型
 	TradeState string //交易状态
+	BillType   string //账单类型
 	Request    interface {
 		Api() string         //渠道接口
 		IgnoreKey() []string //过滤不需要上送的Key
+		IsNeedCert() bool    //是否需要证书
 	}
 	Response struct {
 		ReturnCode ReturnCode `map:"return_code"`          //返回状态码 SUCCESS/FAIL 此字段是通信标识
@@ -209,8 +226,7 @@ func (val Values) ToStruct(object interface{}) {
 				mv.Set(reflect.MakeMap(f.Type))
 			}
 			for k, v := range val {
-				//key模糊匹配
-				if strings.Contains(k, key) {
+				if strings.Index(k, key) == 0 {
 					mv.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
 				}
 			}

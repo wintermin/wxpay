@@ -55,7 +55,15 @@ func TestValues_ToStruct(t *testing.T) {
 	val.Add("coupon_id_1", "1")
 	val.Add("coupon_type_0", "CASH")
 	val.Add("coupon_type_1", "NO_CASH")
-	resp := &OrderQueryResponse{}
+	val.Add("refund_fee_1", "1")
+	val.Add("refund_fee_2", "2")
+	val.Add("coupon_refund_fee_1", "1")
+	val.Add("coupon_refund_fee_2", "2")
+	val.Add("coupon_refund_fee_1_1", "11")
+	val.Add("coupon_refund_fee_1_2", "12")
+	val.Add("coupon_refund_fee_2_1", "21")
+	val.Add("coupon_refund_fee_2_2", "22")
+	resp := &RefundQueryResponse{}
 	val.ToStruct(resp)
 	fmt.Println(resp)
 }

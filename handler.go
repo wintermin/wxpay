@@ -24,8 +24,12 @@ func (c *Client) Do(ctx context.Context, baseUrl string, req Request, resp inter
 	if err != nil {
 		return ctxParam.IsNeedRetry, err
 	}
-	request.Header.Set("Content-Type", "text/xml")
-	response, respErr := c.httpClient.Do(request)
+	request.Header.Set(HttpContentType, HttpContentTypeXml)
+	hc := c.httpClient
+	if req.IsNeedCert() {
+		hc = c.certHttpClient
+	}
+	response, respErr := hc.Do(request)
 	if respErr != nil {
 		//请求渠道失败才重试，用于实现跨城容灾
 		ctxParam.IsNeedRetry = true

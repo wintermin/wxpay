@@ -1,4 +1,4 @@
-# WECHAT PAY
+# wxpay
 
 微信支付SDK
 
@@ -11,9 +11,13 @@
    -  [x] MWEB(H5支付)
    -  [x] JSAPI(公众号支付|小程序支付)
    -  [x] NATIVE(扫码支付)
+       - [x] 转换短链接(ShortUrl)
 - [x] 查询订单(OrderQuery) 
 - [x] 支付结果通知(Notify)
-
+- [x] 下载交易账单(DownloadBill)
+- [x] 申请退款(Refund)
+- [x] 查询退款(RefundQuery)
+- [x] 退款结果通知(RefundNotify)
 ---
 
 ### 快速开始
